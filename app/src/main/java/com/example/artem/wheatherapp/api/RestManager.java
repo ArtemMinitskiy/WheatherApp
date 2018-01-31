@@ -1,4 +1,4 @@
-package com.example.artem.wheatherapp;
+package com.example.artem.wheatherapp.api;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
