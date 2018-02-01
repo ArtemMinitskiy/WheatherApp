@@ -16,23 +16,40 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/nameText"
+                android:text="Odessa"
+                android:paddingBottom="5dp"
+                android:textAppearance="?android:textAppearanceLarge"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/tempText"
                 android:text="Temperature"
-                android:textAppearance="?android:textAppearanceLarge"/>
+                android:paddingTop="5dp"
+                android:textSize="30dp"
+                android:layout_below="@id/nameText"/>
+            <ImageView
+                android:layout_width="110dp"
+                android:layout_height="85dp"
+                android:id="@+id/weatherImage"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:paddingLeft="16dp"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/descriptionText"
                 android:text="Description"
                 android:textAppearance="?android:textAppearanceMedium"
-                android:layout_below="@id/tempText"/>
-            <ImageView
-                android:layout_width="wrap_content"
+                android:layout_below="@id/weatherImage"/>
+            <TextView
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/weatherImage"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:paddingLeft="16dp"/>
+                android:id="@+id/dateText"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:layout_below="@+id/weatherImage"
+                android:layout_alignParentRight="true"/>
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

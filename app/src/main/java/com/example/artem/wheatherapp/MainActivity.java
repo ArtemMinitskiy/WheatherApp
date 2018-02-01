@@ -8,7 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import com.example.artem.wheatherapp.adapter.RecyclerAdapter;
 import com.example.artem.wheatherapp.api.RestManager;
 import com.example.artem.wheatherapp.model.ModelWeather;
-import com.example.artem.wheatherapp.model.ListWeather;
+import com.example.artem.wheatherapp.model.listweather.ListWeather;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
 
                     listItems.add(modelWeather);
 //                    adapter.addData(modelWeather);
-
 
 //                    Log.d("Log", "onResponse: \n" +
 //                            "Temp: " + listWeathers.get(i).getMain().getTemp() + "\n" +

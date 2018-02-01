@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RestManager {
 
-    private static final String BASE_URL = "http://samples.openweathermap.org/";
+    public static final String BASE_URL = "http://api.openweathermap.org/";
     private WeatherAPI weatherAPI;
 
     public WeatherAPI getWeatherAPI() {

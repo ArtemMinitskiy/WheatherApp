@@ -21,6 +21,8 @@ public class ViewHolder extends RecyclerView.ViewHolder{
     public TextView descriptionText;
     @BindView(R.id.weatherImage)
     public ImageView weatherImage;
+    @BindView(R.id.dateText)
+    public TextView dateText;
 
     public ViewHolder(View itemView) {
         super(itemView);

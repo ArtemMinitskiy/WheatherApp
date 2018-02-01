@@ -1,5 +1,6 @@
 package com.example.artem.wheatherapp.model;
 
+import com.example.artem.wheatherapp.model.listweather.ListWeather;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

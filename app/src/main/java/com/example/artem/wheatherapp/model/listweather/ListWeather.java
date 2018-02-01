@@ -1,9 +1,12 @@
-package com.example.artem.wheatherapp.model;
+package com.example.artem.wheatherapp.model.listweather;
 
+import com.example.artem.wheatherapp.model.ModelWeather;
+import com.example.artem.wheatherapp.model.listweather.weather.Weather;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by Artem on 30.01.2018.
@@ -20,6 +23,9 @@ public class ListWeather extends ModelWeather {
     @SerializedName("wind")
     @Expose
     private Wind wind;
+    @SerializedName("dt_txt")
+    @Expose
+    private String dt_txt;
 
     public Main getMain() {
         return main;
@@ -45,12 +51,21 @@ public class ListWeather extends ModelWeather {
         this.wind = wind;
     }
 
+    public String getDt_txt() {
+        return dt_txt;
+    }
+
+    public void setDt_txt(String dt_txt) {
+        this.dt_txt = dt_txt;
+    }
+
     @Override
     public String toString() {
         return "ListWeather{" +
                 "main=" + main +
                 ", weather=" + weather +
                 ", wind=" + wind +
+                ", dt_txt=" + dt_txt +
                 '}';
     }
 }
