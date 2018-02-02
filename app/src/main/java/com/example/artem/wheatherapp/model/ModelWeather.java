@@ -24,6 +24,9 @@ public class ModelWeather {
     @SerializedName("list")
     @Expose
     private ArrayList<ListWeather> listWeather;
+    @SerializedName("city")
+    @Expose
+    private City city;
 
     public String getCod() {
         return cod;
@@ -57,6 +60,14 @@ public class ModelWeather {
         this.listWeather = listWeather;
     }
 
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
+    }
+
     @Override
     public String toString() {
         return "ModelWeather{" +
@@ -64,6 +75,7 @@ public class ModelWeather {
                 ", message='" + message + '\'' +
                 ", cnt='" + cnt + '\'' +
                 ", listWeather=" + listWeather +
+                ", city=" + city +
                 '}';
     }
 }

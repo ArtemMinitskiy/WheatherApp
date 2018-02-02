@@ -35,7 +35,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         ArrayList<ListWeather> weather = weatherList.get(position);
-        Log.d("Log", "onResponse: \n" + "Temp: " + RestManager.BASE_URL + weather.get(position).getWeather().get(0).getIcon());
+//        Log.d("Log", "onResponse: \n" + "Temp: " + RestManager.BASE_URL + weather.get(position).getWeather().get(0).getIcon());
         holder.tempText.setText(FormatTemp(weather.get(position).getMain().getTemp()));
         holder.descriptionText.setText(weather.get(position).getWeather().get(0).getDescription());
         holder.dateText.setText(weather.get(position).getDt_txt());
