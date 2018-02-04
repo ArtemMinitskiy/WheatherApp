@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements WeatherClickListe
         ArrayList<ListWeather> selectedWeather = adapter.getSelectedWeather(position);
         Intent intent = new Intent(MainActivity.this, WeatherDetailActivity.class);
         intent.putParcelableArrayListExtra("Weather",  selectedWeather);
+        intent.putExtra("position", position);
         startActivity(intent);
     }
 }

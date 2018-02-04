@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.artem.wheatherapp.adapter.RecyclerAdapter;
 import com.example.artem.wheatherapp.model.listweather.ListWeather;
 import com.squareup.picasso.Picasso;
 
@@ -37,15 +38,17 @@ public class WeatherDetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         ArrayList<ListWeather> listWeathers = intent.getParcelableArrayListExtra("Weather");
-        Log.d("Log", "" + listWeathers.get(0));
+        int position = intent.getIntExtra("position" , 0);
+        Log.d("Log", "" + listWeathers.get(0).getWeather());
+        Log.d("Log", "" + position);
 
-        tempText.setText(listWeathers.get(0).getMain().getTemp());
-        descriptionText.setText(listWeathers.get(0).getWeather().get(0).getDescription());
-        windText.setText(listWeathers.get(0).getWind().getSpeed());
-        cloudsText.setText(listWeathers.get(0).getClouds().getClouds());
+        tempText.setText(RecyclerAdapter.FormatTemp(listWeathers.get(position).getMain().getTemp()));
+        descriptionText.setText(listWeathers.get(position).getWeather().get(0).getDescription());
+        windText.setText(listWeathers.get(position).getWind().getSpeed());
+        cloudsText.setText(listWeathers.get(position).getClouds().getClouds());
         cityText.setText("Odessa");
         Picasso.with(getApplicationContext())
-                .load("http://openweathermap.org/img/w/" + listWeathers.get(0).getWeather().get(0).getIcon() + ".png")
+                .load("http://openweathermap.org/img/w/" + listWeathers.get(position).getWeather().get(0).getIcon() + ".png")
                 .into(weatherImage);
     }
 
