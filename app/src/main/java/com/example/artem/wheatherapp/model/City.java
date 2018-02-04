@@ -8,9 +8,12 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class City {
-    @SerializedName("city")
+    @SerializedName("name")
     @Expose
     private String city;
+    @SerializedName("country")
+    @Expose
+    private String country;
 
     public String getCity() {
         return city;
@@ -20,10 +23,19 @@ public class City {
         this.city = city;
     }
 
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
     @Override
     public String toString() {
         return "City{" +
                 "city='" + city + '\'' +
+                ", country='" + country + '\'' +
                 '}';
     }
 }

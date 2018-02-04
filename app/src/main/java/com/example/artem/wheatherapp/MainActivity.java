@@ -1,17 +1,19 @@
 package com.example.artem.wheatherapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+
 import com.example.artem.wheatherapp.adapter.RecyclerAdapter;
+import com.example.artem.wheatherapp.adapter.WeatherClickListener;
 import com.example.artem.wheatherapp.api.RestManager;
 import com.example.artem.wheatherapp.model.ModelWeather;
 import com.example.artem.wheatherapp.model.listweather.ListWeather;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,10 +21,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements WeatherClickListener {
     private RestManager restManager;
-
-    private List<ArrayList<ListWeather>> listItems;
     @BindView(R.id.recyclerview)
     RecyclerView recyclerView;
     private RecyclerAdapter adapter;
@@ -47,18 +47,17 @@ public class MainActivity extends AppCompatActivity {
                 for(int i = 0; i < listWeathers.size(); i++){
                     ArrayList<ListWeather> modelWeather = listWeathers;
 
-                    listItems.add(modelWeather);
-//                    adapter.addData(modelWeather);
+                    adapter.addData(modelWeather);
 
 //                    Log.d("Log", "onResponse: \n" +
-//                            "Temp: " + listWeathers.get(i).getMain().getTemp() + "\n" +
-//                            "Weather: " + listWeathers.get(i).getWeather().get(0).getDescription() + "\n" +
-//                            "Icon: " + listWeathers.get(i).getWeather().get(0).getIcon() + "\n" +
-//                            "Wind speed: " + listWeathers.get(i).getWind().getSpeed()  + "\n" +
+//                            "Temp: " + listWeathers.get(0).getMain().getTemp() + "\n" +
+//                            "Weather: " + listWeathers.get(0).getWeather().get(0).getDescription() + "\n" +
+//                            "Icon: " + listWeathers.get(0).getWeather().get(0).getIcon() + "\n" +
+//                            "Wind speed: " + listWeathers.get(0).getWind().getSpeed()  + "\n" +
+//                            "City: " + response.body().getCity()  + "\n" +
 //                            "-------------------------------------------------------------------------\n\n");
 
                 }
-
             }
 
             @Override
@@ -71,8 +70,15 @@ public class MainActivity extends AppCompatActivity {
     public void setRecyclerView(){
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        listItems = new ArrayList<>();
-        adapter = new RecyclerAdapter(listItems);
+        adapter = new RecyclerAdapter(this);
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onClick(int position) {
+        ArrayList<ListWeather> selectedWeather = adapter.getSelectedWeather(position);
+        Intent intent = new Intent(MainActivity.this, WeatherDetailActivity.class);
+        intent.putParcelableArrayListExtra("Weather",  selectedWeather);
+        startActivity(intent);
     }
 }

@@ -1,5 +1,8 @@
 package com.example.artem.wheatherapp.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.example.artem.wheatherapp.model.listweather.ListWeather;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -74,8 +77,9 @@ public class ModelWeather {
                 "cod='" + cod + '\'' +
                 ", message='" + message + '\'' +
                 ", cnt='" + cnt + '\'' +
-                ", listWeather=" + listWeather +
                 ", city=" + city +
+                ", listWeather=" + listWeather +
                 '}';
     }
+
 }
