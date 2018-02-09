@@ -39,8 +39,6 @@ public class WeatherDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         ArrayList<ListWeather> listWeathers = intent.getParcelableArrayListExtra("Weather");
         int position = intent.getIntExtra("position" , 0);
-        Log.d("Log", "" + listWeathers.get(0).getWeather());
-        Log.d("Log", "" + position);
 
         tempText.setText(RecyclerAdapter.FormatTemp(listWeathers.get(position).getMain().getTemp()));
         descriptionText.setText(listWeathers.get(position).getWeather().get(0).getDescription());

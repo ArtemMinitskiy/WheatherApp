@@ -10,6 +10,8 @@ import android.util.Log;
 import com.example.artem.wheatherapp.adapter.RecyclerAdapter;
 import com.example.artem.wheatherapp.adapter.WeatherClickListener;
 import com.example.artem.wheatherapp.api.RestManager;
+import com.example.artem.wheatherapp.api.RestManagerLocation;
+import com.example.artem.wheatherapp.model.ModelLocation;
 import com.example.artem.wheatherapp.model.ModelWeather;
 import com.example.artem.wheatherapp.model.listweather.ListWeather;
 
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements WeatherClickListe
     @BindView(R.id.recyclerview)
     RecyclerView recyclerView;
     private RecyclerAdapter adapter;
+    private RestManagerLocation restManagerLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +36,33 @@ public class MainActivity extends AppCompatActivity implements WeatherClickListe
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setRecyclerView();
-        getWeather();
+        getLocation();
 
     }
 
-    private void getWeather() {
+    private void getLocation() {
+        restManagerLocation = new RestManagerLocation();
+        Call<ModelLocation> call = restManagerLocation.getLocationAPI().getLocation();
+        call.enqueue(new Callback<ModelLocation>() {
+            @Override
+            public void onResponse(Call<ModelLocation> call, Response<ModelLocation> response) {
+                Log.d("Log", "onResponse: Server Response: " + response.toString());
+                Log.d("Log", "onResponse: received information: " + response.body().toString());
+                ModelLocation modelLocation = response.body();
+                getWeather(modelLocation.getLatitude(), modelLocation.getLongitude());
+            }
+
+            @Override
+            public void onFailure(Call<ModelLocation> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void getWeather(String latitude, String longitude) {
         restManager = new RestManager();
 
-        Call<ModelWeather> call =  restManager.getWeatherAPI().getWeather();
+        Call<ModelWeather> call =  restManager.getWeatherAPI().getWeather(46.4639, 	30.7386);
         call.enqueue(new Callback<ModelWeather>() {
             @Override
             public void onResponse(Call<ModelWeather> call, Response<ModelWeather> response) {
