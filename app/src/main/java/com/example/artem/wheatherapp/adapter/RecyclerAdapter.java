@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.artem.wheatherapp.R;
@@ -45,6 +46,38 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         Picasso.with(holder.itemView.getContext())
                 .load("http://openweathermap.org/img/w/" + weather.get(position).getWeather().get(0).getIcon() + ".png")
                 .into(holder.weatherImage);
+        getBackground(holder, weather.get(position).getDt_txt());
+    }
+
+    private void getBackground(ViewHolder holder, String sDate) {
+        String date = sDate.substring(11);
+        switch (date){
+            case "12:00:00":
+                holder.relativeLayout.setBackgroundResource(R.drawable.daymini);
+                break;
+            case "15:00:00":
+                holder.relativeLayout.setBackgroundResource(R.drawable.daymini);
+                break;
+            case "18:00:00":
+                holder.relativeLayout.setBackgroundResource(R.drawable.sunsetmini);
+                break;
+            case "21:00:00":
+                holder.relativeLayout.setBackgroundResource(R.drawable.sunsetmini);
+                break;
+            case "00:00:00":
+                holder.relativeLayout.setBackgroundResource(R.drawable.nightmini);
+                break;
+            case "03:00:00":
+                holder.relativeLayout.setBackgroundResource(R.drawable.nightmini);
+                break;
+            case "06:00:00":
+                holder.relativeLayout.setBackgroundResource(R.drawable.sunrisemini);
+                break;
+            case "09:00:00":
+                holder.relativeLayout.setBackgroundResource(R.drawable.sunrisemini);
+                break;
+        }
+
     }
 
     public int getItemCount() {
@@ -67,6 +100,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        @BindView(R.id.relativeLayout)
+        public RelativeLayout relativeLayout;
         @BindView(R.id.tempText)
         public TextView tempText;
         @BindView(R.id.descriptionText)
@@ -87,5 +122,5 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             mListener.onClick(getLayoutPosition());
         }
     }
-}
 
+}

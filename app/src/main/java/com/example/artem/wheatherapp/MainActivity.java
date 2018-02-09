@@ -33,11 +33,14 @@ public class MainActivity extends AppCompatActivity implements WeatherClickListe
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setRecyclerView();
+        getWeather();
 
+    }
+
+    private void getWeather() {
         restManager = new RestManager();
 
         Call<ModelWeather> call =  restManager.getWeatherAPI().getWeather();
-
         call.enqueue(new Callback<ModelWeather>() {
             @Override
             public void onResponse(Call<ModelWeather> call, Response<ModelWeather> response) {
