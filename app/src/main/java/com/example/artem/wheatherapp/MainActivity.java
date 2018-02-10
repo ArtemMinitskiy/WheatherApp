@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements WeatherClickListe
 
     }
 
-    private void getLocation() {
+    public void getLocation() {
         restManagerLocation = new RestManagerLocation();
         Call<ModelLocation> call = restManagerLocation.getLocationAPI().getLocation();
         call.enqueue(new Callback<ModelLocation>() {
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements WeatherClickListe
     private void getWeather(String latitude, String longitude) {
         restManager = new RestManager();
 
-        Call<ModelWeather> call =  restManager.getWeatherAPI().getWeather(46.4639, 	30.7386);
+        Call<ModelWeather> call =  restManager.getWeatherAPI().getWeather(latitude,	longitude);
         call.enqueue(new Callback<ModelWeather>() {
             @Override
             public void onResponse(Call<ModelWeather> call, Response<ModelWeather> response) {

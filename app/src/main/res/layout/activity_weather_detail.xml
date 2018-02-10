@@ -29,7 +29,8 @@
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="City: "
+                android:text="@string/city"
+                android:paddingRight="10dp"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView
@@ -52,7 +53,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Temperature: "
+                android:text="@string/temperature"
+                android:paddingRight="10dp"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView
@@ -74,7 +76,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Weather: "
+                android:text="@string/weather"
+                android:paddingRight="10dp"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView
@@ -96,7 +99,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Wind: "
+                android:text="@string/wind"
+                android:paddingRight="10dp"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView
@@ -118,7 +122,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Clouds: "
+                android:text="@string/clouds"
+                android:paddingRight="10dp"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView

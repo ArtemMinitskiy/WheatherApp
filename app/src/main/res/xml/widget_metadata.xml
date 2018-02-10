@@ -1,0 +1,8 @@
+<appwidget-provider
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:initialLayout="@layout/weather_widget"
+    android:previewImage="@drawable/daymini"
+    android:minHeight="50dp"
+    android:minWidth="130dp"
+    android:updatePeriodMillis="2400000">
+</appwidget-provider>

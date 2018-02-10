@@ -90,7 +90,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     public static String FormatTemp(String temp) {
         float i = Float.parseFloat(temp) - 273;
-        return String.format("%.2f",i);
+        return String.format("%.2f",i) + "\u00B0";
 
     }
 
