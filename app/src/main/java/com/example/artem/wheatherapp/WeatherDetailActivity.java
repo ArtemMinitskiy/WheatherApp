@@ -2,7 +2,8 @@ package com.example.artem.wheatherapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,18 +18,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class WeatherDetailActivity extends AppCompatActivity {
-    @BindView(R.id.textTemp)
-    public TextView tempText;
-    @BindView(R.id.textDescription)
-    public TextView descriptionText;
-    @BindView(R.id.textWind)
-    public TextView windText;
-    @BindView(R.id.textClouds)
-    public TextView cloudsText;
-    @BindView(R.id.textCity)
-    public TextView cityText;
-    @BindView(R.id.weatherImage)
-    public ImageView weatherImage;
+    @BindView(R.id.textTemp) public TextView tempText;
+    @BindView(R.id.textDescription) public TextView descriptionText;
+    @BindView(R.id.textWind) public TextView windText;
+    @BindView(R.id.textClouds) public TextView cloudsText;
+    @BindView(R.id.textCity) public TextView cityText;
+    @BindView(R.id.weatherImage) public ImageView weatherImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +34,8 @@ public class WeatherDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         ArrayList<ListWeather> listWeathers = intent.getParcelableArrayListExtra("Weather");
         int position = intent.getIntExtra("position" , 0);
-        Log.d("Log", "" + listWeathers.get(0).getWeather());
-        Log.d("Log", "" + position);
+//        Log.d("Log", "" + listWeathers.get(0).getWeather());
+//        Log.d("Log", "" + position);
 
         tempText.setText(RecyclerAdapter.FormatTemp(listWeathers.get(position).getMain().getTemp()));
         descriptionText.setText(listWeathers.get(position).getWeather().get(0).getDescription());

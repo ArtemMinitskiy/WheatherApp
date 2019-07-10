@@ -1,10 +1,9 @@
 package com.example.artem.wheatherapp.adapter;
 
-/**
- * Created by Artem on 30.01.2018.
- */
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.support.v7.widget.RecyclerView;
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,13 +31,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         mListener = listener;
     }
 
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @NonNull
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.weather_item, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerAdapter.ViewHolder holder, int position) {
         ArrayList<ListWeather> weather = weatherList.get(position);
         holder.tempText.setText(FormatTemp(weather.get(position).getMain().getTemp()));
         holder.descriptionText.setText(weather.get(position).getWeather().get(0).getDescription());
@@ -88,6 +88,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         return weatherList.get(position);
     }
 
+    @SuppressLint("DefaultLocale")
     public static String FormatTemp(String temp) {
         float i = Float.parseFloat(temp) - 273;
         return String.format("%.2f",i);
@@ -111,7 +112,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         @BindView(R.id.dateText)
         public TextView dateText;
 
-        public ViewHolder(View itemView) {
+        private ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);

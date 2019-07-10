@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">WheatherApp</string>
+    <string name="discription">Discription</string>
+    <string name="date">Date</string>
+    <string name="city">City:</string>
+    <string name="temperature">Temperature:</string>
+    <string name="weather">Weather:</string>
+    <string name="wind">Wind:</string>
+    <string name="speed">Speed</string>
+    <string name="clouds">Clouds:</string>
 </resources>
