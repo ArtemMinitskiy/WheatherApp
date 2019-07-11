@@ -34,14 +34,15 @@ public class WeatherDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         ArrayList<ListWeather> listWeathers = intent.getParcelableArrayListExtra("Weather");
         int position = intent.getIntExtra("position" , 0);
-//        Log.d("Log", "" + listWeathers.get(0).getWeather());
-//        Log.d("Log", "" + position);
+        String nameCity = intent.getStringExtra("nameCity");
+        Log.d("Log", "" + listWeathers.get(0).getWeather());
+        Log.d("Log", "" + position);
 
         tempText.setText(RecyclerAdapter.FormatTemp(listWeathers.get(position).getMain().getTemp()));
         descriptionText.setText(listWeathers.get(position).getWeather().get(0).getDescription());
         windText.setText(listWeathers.get(position).getWind().getSpeed());
         cloudsText.setText(listWeathers.get(position).getClouds().getClouds());
-        cityText.setText("Odessa");
+        cityText.setText(nameCity);
         Picasso.with(getApplicationContext())
                 .load("http://openweathermap.org/img/w/" + listWeathers.get(position).getWeather().get(0).getIcon() + ".png")
                 .into(weatherImage);
