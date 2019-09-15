@@ -7,19 +7,17 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.util.Log;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.artem.wheatherapp.adapter.RecyclerAdapter;
 import com.example.artem.wheatherapp.adapter.WeatherClickListener;
+import com.example.artem.wheatherapp.adapter.WeatherRecyclerAdapter;
 import com.example.artem.wheatherapp.api.RestManager;
 import com.example.artem.wheatherapp.model.ModelWeather;
 import com.example.artem.wheatherapp.model.listweather.ListWeather;
@@ -32,8 +30,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,9 +37,8 @@ import retrofit2.Response;
 import static com.example.artem.wheatherapp.GpsUtils.GPS_REQUEST;
 
 public class MainActivity extends AppCompatActivity implements WeatherClickListener {
-    private RestManager restManager;
-    @BindView(R.id.recyclerview) RecyclerView recyclerView;
-    private RecyclerAdapter adapter;
+    private RecyclerView recyclerView;
+    private WeatherRecyclerAdapter adapter;
     private ArrayList<ListWeather> modelWeather;
 
     private String nameCity;
@@ -62,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements WeatherClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        recyclerView = findViewById(R.id.recyclerview);
 
         setRecyclerView();
         setLocationRequest();
@@ -106,9 +101,9 @@ public class MainActivity extends AppCompatActivity implements WeatherClickListe
     }
 
     private void getWeather(final Double lat, final Double lon) {
-        restManager = new RestManager();
+        RestManager restManager = new RestManager();
 
-        Call<ModelWeather> call =  restManager.getWeatherAPI().getWeather(String.valueOf(lat), String.valueOf(lon));
+        Call<ModelWeather> call = restManager.getWeatherAPI().getWeather(String.valueOf(lat), String.valueOf(lon));
         call.enqueue(new Callback<ModelWeather>() {
             @Override
             public void onResponse(@NonNull Call<ModelWeather> call, @NonNull Response<ModelWeather> response) {
@@ -119,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements WeatherClickListe
                 getSupportActionBar().setTitle(nameCity);
 
                 ArrayList<ListWeather> listWeathers = response.body().getListWeather();
-                for(int i = 0; i < listWeathers.size(); i++){
+                for (int i = 0; i < listWeathers.size(); i++) {
                     modelWeather = listWeathers;
 
                     adapter.addData(modelWeather);
@@ -130,8 +125,8 @@ public class MainActivity extends AppCompatActivity implements WeatherClickListe
                             "Temp: " + listWeathers.get(0).getMain().getTemp() + "\n" +
                             "Weather: " + listWeathers.get(0).getWeather().get(0).getDescription() + "\n" +
                             "Icon: " + listWeathers.get(0).getWeather().get(0).getIcon() + "\n" +
-                            "Wind speed: " + listWeathers.get(0).getWind().getSpeed()  + "\n" +
-                            "City: " + response.body().getCity().getCity()  + "\n" +
+                            "Wind speed: " + listWeathers.get(0).getWind().getSpeed() + "\n" +
+                            "City: " + response.body().getCity().getCity() + "\n" +
                             "-------------------------------------------------------------------------\n\n");
 
                 }
@@ -139,15 +134,15 @@ public class MainActivity extends AppCompatActivity implements WeatherClickListe
 
             @Override
             public void onFailure(@NonNull Call<ModelWeather> call, @NonNull Throwable t) {
-                Log.e("Log", "onFailure: Something went wrong: " + t.getMessage() );
+                Log.e("Log", "onFailure: Something went wrong: " + t.getMessage());
             }
         });
     }
 
-    public void setRecyclerView(){
+    public void setRecyclerView() {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        adapter = new RecyclerAdapter(this);
+        adapter = new WeatherRecyclerAdapter(this);
         recyclerView.setAdapter(adapter);
     }
 
@@ -155,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements WeatherClickListe
     public void onClick(int position) {
         ArrayList<ListWeather> selectedWeather = adapter.getSelectedWeather(position);
         Intent intent = new Intent(MainActivity.this, WeatherDetailActivity.class);
-        intent.putParcelableArrayListExtra("Weather",  selectedWeather);
+        intent.putParcelableArrayListExtra("Weather", selectedWeather);
         intent.putExtra("position", position);
         intent.putExtra("nameCity", nameCity);
         startActivity(intent);

@@ -2,48 +2,52 @@ package com.example.artem.wheatherapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.artem.wheatherapp.adapter.RecyclerAdapter;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.artem.wheatherapp.adapter.WeatherRecyclerAdapter;
 import com.example.artem.wheatherapp.model.listweather.ListWeather;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class WeatherDetailActivity extends AppCompatActivity {
-    @BindView(R.id.textTemp) public TextView tempText;
-    @BindView(R.id.textDescription) public TextView descriptionText;
-    @BindView(R.id.textWind) public TextView windText;
-    @BindView(R.id.textClouds) public TextView cloudsText;
-    @BindView(R.id.textCity) public TextView cityText;
-    @BindView(R.id.weatherImage) public ImageView weatherImage;
+    public TextView tempText;
+    public TextView descriptionText;
+    public TextView windText;
+    public TextView cloudsText;
+    public TextView cityText;
+    public ImageView weatherImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_detail);
-        ButterKnife.bind(this);
+
+        tempText = findViewById(R.id.textTemp);
+        descriptionText = findViewById(R.id.textDescription);
+        windText = findViewById(R.id.textWind);
+        cloudsText = findViewById(R.id.textClouds);
+        cityText = findViewById(R.id.textCity);
+        weatherImage = findViewById(R.id.weatherImage);
 
         Intent intent = getIntent();
         ArrayList<ListWeather> listWeathers = intent.getParcelableArrayListExtra("Weather");
         int position = intent.getIntExtra("position" , 0);
         String nameCity = intent.getStringExtra("nameCity");
-        Log.d("Log", "" + listWeathers.get(0).getWeather());
-        Log.d("Log", "" + position);
+        getSupportActionBar().setTitle(nameCity);
+        Log.i("Log", "" + WeatherRecyclerAdapter.FormatTemp(listWeathers.get(position).getMain().getTemp()));
+        Log.i("Log", "" + position);
 
-        tempText.setText(RecyclerAdapter.FormatTemp(listWeathers.get(position).getMain().getTemp()));
+        tempText.setText(WeatherRecyclerAdapter.FormatTemp(listWeathers.get(position).getMain().getTemp()));
         descriptionText.setText(listWeathers.get(position).getWeather().get(0).getDescription());
         windText.setText(listWeathers.get(position).getWind().getSpeed());
         cloudsText.setText(listWeathers.get(position).getClouds().getClouds());
         cityText.setText(nameCity);
-        Picasso.with(getApplicationContext())
+        Picasso.get()
                 .load("http://openweathermap.org/img/w/" + listWeathers.get(position).getWeather().get(0).getIcon() + ".png")
                 .into(weatherImage);
     }
