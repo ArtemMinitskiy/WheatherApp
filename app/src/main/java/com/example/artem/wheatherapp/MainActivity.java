@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,32 +15,30 @@ import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.artem.wheatherapp.adapter.WeatherClickListener;
 import com.example.artem.wheatherapp.adapter.WeatherRecyclerAdapter;
-import com.example.artem.wheatherapp.api.RestManager;
+import com.example.artem.wheatherapp.api.WeatherAPI;
 import com.example.artem.wheatherapp.model.ModelWeather;
-import com.example.artem.wheatherapp.model.listweather.ListWeather;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
-import java.util.ArrayList;
+import java.util.Objects;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.example.artem.wheatherapp.GpsUtils.GPS_REQUEST;
 
-public class MainActivity extends AppCompatActivity implements WeatherClickListener {
-    private RecyclerView recyclerView;
-    private WeatherRecyclerAdapter adapter;
-    private ArrayList<ListWeather> modelWeather;
+public class MainActivity extends AppCompatActivity {
+    public static final String BASE_URL = "http://api.openweathermap.org/";
 
-    private String nameCity;
+    private RecyclerView recyclerView;
 
     public static final int LOCATION_REQUEST = 1000;
 
@@ -53,23 +50,20 @@ public class MainActivity extends AppCompatActivity implements WeatherClickListe
     private boolean isContinue = false;
     private boolean isGPS = false;
 
+    private CompositeDisposable mCompositeDisposable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         recyclerView = findViewById(R.id.recyclerview);
+        mCompositeDisposable = new CompositeDisposable();
 
-        setRecyclerView();
         setLocationRequest();
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        new GpsUtils(this).turnGPSOn(new GpsUtils.onGpsListener() {
-            @Override
-            public void gpsStatus(boolean isGPSEnable) {
-                isGPS = isGPSEnable;
-            }
-        });
+        new GpsUtils(this).turnGPSOn(isGPSEnable -> isGPS = isGPSEnable);
 
         locationCallback = new LocationCallback() {
             @Override
@@ -93,67 +87,42 @@ public class MainActivity extends AppCompatActivity implements WeatherClickListe
 
     }
 
+    private void loadJSON(final Double lat, final Double lon) {
+        WeatherAPI weatherAPI = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build().create(WeatherAPI.class);
+
+        mCompositeDisposable.add(weatherAPI.getWeather(String.valueOf(lat), String.valueOf(lon))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(this::setRecyclerView, this::handleError));
+    }
+
+    private void setRecyclerView(ModelWeather modelWeather) {
+        Objects.requireNonNull(getSupportActionBar()).setTitle(modelWeather.getCity().getCity());
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        WeatherRecyclerAdapter adapter = new WeatherRecyclerAdapter(modelWeather);
+        recyclerView.setAdapter(adapter);
+    }
+
+    private void handleError(Throwable error) {
+        Toast.makeText(this, "Error " + error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mCompositeDisposable.clear();
+    }
+
     private void setLocationRequest() {
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(10 * 1000);
         locationRequest.setFastestInterval(5 * 1000);
-    }
-
-    private void getWeather(final Double lat, final Double lon) {
-        RestManager restManager = new RestManager();
-
-        Call<ModelWeather> call = restManager.getWeatherAPI().getWeather(String.valueOf(lat), String.valueOf(lon));
-        call.enqueue(new Callback<ModelWeather>() {
-            @Override
-            public void onResponse(@NonNull Call<ModelWeather> call, @NonNull Response<ModelWeather> response) {
-                Log.d("Log", "onResponse: Server Response: " + response.toString());
-                Log.d("Log", "onResponse: received information: " + response.body().toString());
-
-                nameCity = response.body().getCity().getCity();
-                getSupportActionBar().setTitle(nameCity);
-
-                ArrayList<ListWeather> listWeathers = response.body().getListWeather();
-                for (int i = 0; i < listWeathers.size(); i++) {
-                    modelWeather = listWeathers;
-
-                    adapter.addData(modelWeather);
-
-                    Log.d("Log", lat + " Latitude " + lon + " Longtitude");
-
-                    Log.d("Log", "onResponse: \n" +
-                            "Temp: " + listWeathers.get(0).getMain().getTemp() + "\n" +
-                            "Weather: " + listWeathers.get(0).getWeather().get(0).getDescription() + "\n" +
-                            "Icon: " + listWeathers.get(0).getWeather().get(0).getIcon() + "\n" +
-                            "Wind speed: " + listWeathers.get(0).getWind().getSpeed() + "\n" +
-                            "City: " + response.body().getCity().getCity() + "\n" +
-                            "-------------------------------------------------------------------------\n\n");
-
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ModelWeather> call, @NonNull Throwable t) {
-                Log.e("Log", "onFailure: Something went wrong: " + t.getMessage());
-            }
-        });
-    }
-
-    public void setRecyclerView() {
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        adapter = new WeatherRecyclerAdapter(this);
-        recyclerView.setAdapter(adapter);
-    }
-
-    @Override
-    public void onClick(int position) {
-        ArrayList<ListWeather> selectedWeather = adapter.getSelectedWeather(position);
-        Intent intent = new Intent(MainActivity.this, WeatherDetailActivity.class);
-        intent.putParcelableArrayListExtra("Weather", selectedWeather);
-        intent.putExtra("position", position);
-        intent.putExtra("nameCity", nameCity);
-        startActivity(intent);
     }
 
     private void getLocation() {
@@ -165,19 +134,14 @@ public class MainActivity extends AppCompatActivity implements WeatherClickListe
             if (isContinue) {
                 mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
             } else {
-                mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-                    @SuppressLint("MissingPermission")
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null) {
-                            wayLatitude = location.getLatitude();
-                            wayLongitude = location.getLongitude();
-                            getWeather(wayLatitude, wayLongitude);
-                        } else {
-                            mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
-                        }
+                mFusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+                    if (location != null) {
+                        wayLatitude = location.getLatitude();
+                        wayLongitude = location.getLongitude();
+                        loadJSON(wayLatitude, wayLongitude);
+                    } else {
+                        mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
                     }
-
                 });
             }
         }
@@ -187,29 +151,23 @@ public class MainActivity extends AppCompatActivity implements WeatherClickListe
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case 1000: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (isContinue) {
-                        mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
-                    } else {
-                        mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-                            @Override
-                            public void onSuccess(Location location) {
-                                if (location != null) {
-                                    wayLatitude = location.getLatitude();
-                                    wayLongitude = location.getLongitude();
-                                } else {
-                                    mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
-                                }
-                            }
-                        });
-                    }
+        if (requestCode == 1000) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (isContinue) {
+                    mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
                 } else {
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                    mFusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+                        if (location != null) {
+                            wayLatitude = location.getLatitude();
+                            wayLongitude = location.getLongitude();
+                        } else {
+                            mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+                        }
+                    });
                 }
-                break;
+            } else {
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
             }
         }
     }

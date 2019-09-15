@@ -1,6 +1,8 @@
 package com.example.artem.wheatherapp.adapter;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,20 +14,16 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.artem.wheatherapp.R;
-import com.example.artem.wheatherapp.model.listweather.ListWeather;
+import com.example.artem.wheatherapp.WeatherDetailActivity;
+import com.example.artem.wheatherapp.model.ModelWeather;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class WeatherRecyclerAdapter extends RecyclerView.Adapter<WeatherRecyclerAdapter.ViewHolder> {
 
-    private List<ArrayList<ListWeather>> weatherList;
-    private WeatherClickListener mListener;
+    private ModelWeather model;
 
-    public WeatherRecyclerAdapter(WeatherClickListener listener) {
-        weatherList = new ArrayList<>();
-        mListener = listener;
+    public WeatherRecyclerAdapter(ModelWeather modelWeather) {
+        this.model = modelWeather;
     }
 
     @NonNull
@@ -36,14 +34,17 @@ public class WeatherRecyclerAdapter extends RecyclerView.Adapter<WeatherRecycler
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ArrayList<ListWeather> weather = weatherList.get(position);
-        holder.tempText.setText(FormatTemp(weather.get(position).getMain().getTemp()));
-        holder.descriptionText.setText(weather.get(position).getWeather().get(0).getDescription());
-        holder.dateText.setText(weather.get(position).getDt_txt());
+        holder.tempText.setText(FormatTemp(model.getListWeather().get(position).getMain().getTemp()));
+        holder.descriptionText.setText(model.getListWeather().get(position).getWeather().get(0).getDescription());
+        holder.dateText.setText(model.getListWeather().get(position).getDt_txt());
         Picasso.get()
-                .load("http://openweathermap.org/img/w/" + weather.get(position).getWeather().get(0).getIcon() + ".png")
+                .load("http://openweathermap.org/img/w/" + model.getListWeather()
+                        .get(position).getWeather().get(0).getIcon() + ".png")
                 .into(holder.weatherImage);
-        getBackground(holder, weather.get(position).getDt_txt());
+        getBackground(holder, model.getListWeather().get(position).getDt_txt());
+
+        holder.cardView.setOnClickListener(view ->
+                holder.itemView.getContext().startActivity(transition(holder.itemView.getContext(), model, position)));
     }
 
     private void getBackground(ViewHolder holder, String sDate) {
@@ -78,11 +79,7 @@ public class WeatherRecyclerAdapter extends RecyclerView.Adapter<WeatherRecycler
     }
 
     public int getItemCount() {
-        return weatherList.size();
-    }
-
-    public ArrayList<ListWeather> getSelectedWeather(int position) {
-        return weatherList.get(position);
+        return 35;
     }
 
     @SuppressLint("DefaultLocale")
@@ -92,12 +89,7 @@ public class WeatherRecyclerAdapter extends RecyclerView.Adapter<WeatherRecycler
 
     }
 
-    public void addData(ArrayList<ListWeather> weathers) {
-        weatherList.add(weathers);
-        notifyDataSetChanged();
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         private CardView cardView;
         private TextView tempText;
         private TextView descriptionText;
@@ -111,13 +103,19 @@ public class WeatherRecyclerAdapter extends RecyclerView.Adapter<WeatherRecycler
             descriptionText = itemView.findViewById(R.id.descriptionText);
             weatherImage = itemView.findViewById(R.id.weatherImage);
             dateText = itemView.findViewById(R.id.dateText);
-            itemView.setOnClickListener(this);
         }
 
-        @Override
-        public void onClick(View view) {
-            mListener.onClick(getLayoutPosition());
-        }
+    }
+
+    private Intent transition(Context context, ModelWeather model, int position) {
+        Intent intent = new Intent(context, WeatherDetailActivity.class);
+        intent.putExtra("temp", model.getListWeather().get(position).getMain().getTemp());
+        intent.putExtra("desc", model.getListWeather().get(position).getWeather().get(0).getDescription());
+        intent.putExtra("wind", model.getListWeather().get(position).getWind().getSpeed());
+        intent.putExtra("clouds", model.getListWeather().get(position).getClouds().getClouds());
+        intent.putExtra("icon", model.getListWeather().get(position).getWeather().get(0).getIcon());
+        intent.putExtra("city", model.getCity().getCity());
+        return intent;
     }
 
 }
