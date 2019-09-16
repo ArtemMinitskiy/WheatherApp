@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.artem.wheatherapp.adapter.WeatherRecyclerAdapter;
 import com.example.artem.wheatherapp.api.WeatherAPI;
 import com.example.artem.wheatherapp.model.ModelWeather;
+import com.example.artem.wheatherapp.model.WeatherItem;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -25,6 +26,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -34,9 +36,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.example.artem.wheatherapp.GpsUtils.GPS_REQUEST;
+import static com.example.artem.wheatherapp.Utils.BASE_URL;
+import static com.example.artem.wheatherapp.Utils.NUMBER_OF_LISTWEATHER;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String BASE_URL = "http://api.openweathermap.org/";
 
     private RecyclerView recyclerView;
 
@@ -101,10 +104,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setRecyclerView(ModelWeather modelWeather) {
+        ArrayList<WeatherItem> weatherItems = new ArrayList<>();
+        for (int i = 0; i < NUMBER_OF_LISTWEATHER; i++){
+            weatherItems.add(new WeatherItem(modelWeather.getCity().getCity(),
+                    Utils.FormatTemp(modelWeather.getListWeather().get(i).getMain().getTemp()),
+                    modelWeather.getListWeather().get(i).getWeather().get(0).getDescription(),
+                    modelWeather.getListWeather().get(i).getWeather().get(0).getIcon(),
+                    modelWeather.getListWeather().get(i).getDt_txt(),
+                    modelWeather.getListWeather().get(i).getWind().getSpeed(),
+                    modelWeather.getListWeather().get(i).getClouds().getClouds()));
+
+        }
         Objects.requireNonNull(getSupportActionBar()).setTitle(modelWeather.getCity().getCity());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        WeatherRecyclerAdapter adapter = new WeatherRecyclerAdapter(modelWeather);
+        WeatherRecyclerAdapter adapter = new WeatherRecyclerAdapter(weatherItems);
         recyclerView.setAdapter(adapter);
     }
 

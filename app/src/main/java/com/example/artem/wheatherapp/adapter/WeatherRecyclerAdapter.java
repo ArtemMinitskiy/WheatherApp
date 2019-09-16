@@ -1,120 +1,68 @@
 package com.example.artem.wheatherapp.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.artem.wheatherapp.R;
 import com.example.artem.wheatherapp.WeatherDetailActivity;
-import com.example.artem.wheatherapp.model.ModelWeather;
-import com.squareup.picasso.Picasso;
+import com.example.artem.wheatherapp.databinding.WeatherItemBinding;
+import com.example.artem.wheatherapp.model.WeatherItem;
+
+import java.util.ArrayList;
 
 public class WeatherRecyclerAdapter extends RecyclerView.Adapter<WeatherRecyclerAdapter.ViewHolder> {
 
-    private ModelWeather model;
+    private ArrayList<WeatherItem> weatherItems;
 
-    public WeatherRecyclerAdapter(ModelWeather modelWeather) {
-        this.model = modelWeather;
+    public WeatherRecyclerAdapter(ArrayList<WeatherItem> weatherItems) {
+        this.weatherItems = weatherItems;
     }
 
     @NonNull
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.weather_item, parent, false);
-        return new ViewHolder(view);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        WeatherItemBinding binding = WeatherItemBinding.inflate(inflater, parent, false);
+        return new ViewHolder(binding.getRoot());
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.tempText.setText(FormatTemp(model.getListWeather().get(position).getMain().getTemp()));
-        holder.descriptionText.setText(model.getListWeather().get(position).getWeather().get(0).getDescription());
-        holder.dateText.setText(model.getListWeather().get(position).getDt_txt());
-        Picasso.get()
-                .load("http://openweathermap.org/img/w/" + model.getListWeather()
-                        .get(position).getWeather().get(0).getIcon() + ".png")
-                .into(holder.weatherImage);
-        getBackground(holder, model.getListWeather().get(position).getDt_txt());
+        final WeatherItem weatherItem = weatherItems.get(position);
+        holder.binding.setWeather(weatherItem);
 
         holder.cardView.setOnClickListener(view ->
-                holder.itemView.getContext().startActivity(transition(holder.itemView.getContext(), model, position)));
-    }
-
-    private void getBackground(ViewHolder holder, String sDate) {
-        String date = sDate.substring(11);
-        switch (date) {
-            case "12:00:00":
-                holder.cardView.setBackgroundResource(R.drawable.daymini);
-                break;
-            case "15:00:00":
-                holder.cardView.setBackgroundResource(R.drawable.daymini);
-                break;
-            case "18:00:00":
-                holder.cardView.setBackgroundResource(R.drawable.sunsetmini);
-                break;
-            case "21:00:00":
-                holder.cardView.setBackgroundResource(R.drawable.sunsetmini);
-                break;
-            case "00:00:00":
-                holder.cardView.setBackgroundResource(R.drawable.nightmini);
-                break;
-            case "03:00:00":
-                holder.cardView.setBackgroundResource(R.drawable.nightmini);
-                break;
-            case "06:00:00":
-                holder.cardView.setBackgroundResource(R.drawable.sunrisemini);
-                break;
-            case "09:00:00":
-                holder.cardView.setBackgroundResource(R.drawable.sunrisemini);
-                break;
-        }
-
+                holder.itemView.getContext().startActivity(transition(holder.itemView.getContext(), weatherItems, position)));
     }
 
     public int getItemCount() {
-        return 35;
-    }
-
-    @SuppressLint("DefaultLocale")
-    public static String FormatTemp(String temp) {
-        float i = Float.parseFloat(temp) - 273;
-        return String.format("%.2f", i);
-
+        return weatherItems.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private CardView cardView;
-        private TextView tempText;
-        private TextView descriptionText;
-        private ImageView weatherImage;
-        private TextView dateText;
+        WeatherItemBinding binding;
 
         private ViewHolder(View itemView) {
             super(itemView);
+            binding = DataBindingUtil.bind(itemView);
             cardView = itemView.findViewById(R.id.cardview);
-            tempText = itemView.findViewById(R.id.tempText);
-            descriptionText = itemView.findViewById(R.id.descriptionText);
-            weatherImage = itemView.findViewById(R.id.weatherImage);
-            dateText = itemView.findViewById(R.id.dateText);
+
         }
 
     }
 
-    private Intent transition(Context context, ModelWeather model, int position) {
+    private Intent transition(Context context, ArrayList<WeatherItem> model, int position) {
         Intent intent = new Intent(context, WeatherDetailActivity.class);
-        intent.putExtra("temp", model.getListWeather().get(position).getMain().getTemp());
-        intent.putExtra("desc", model.getListWeather().get(position).getWeather().get(0).getDescription());
-        intent.putExtra("wind", model.getListWeather().get(position).getWind().getSpeed());
-        intent.putExtra("clouds", model.getListWeather().get(position).getClouds().getClouds());
-        intent.putExtra("icon", model.getListWeather().get(position).getWeather().get(0).getIcon());
-        intent.putExtra("city", model.getCity().getCity());
+        intent.putParcelableArrayListExtra("Weather", model);
+        intent.putExtra("position", position);
         return intent;
     }
 

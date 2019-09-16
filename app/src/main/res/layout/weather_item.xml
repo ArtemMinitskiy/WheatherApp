@@ -1,63 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:cardview="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/cardview"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="5dp"
-    android:layout_marginTop="5dp"
-    android:layout_marginRight="5dp">
+    >
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <data>
+        <variable name="weather" type="com.example.artem.wheatherapp.model.WeatherItem" />
+    </data>
+
+    <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/tools"
+        android:id="@+id/cardview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        app:setBackground="@{weather.date.substring(11)}"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp">
 
-        <ImageView
-            android:id="@+id/weatherImage"
-            android:layout_width="110dp"
-            android:layout_height="75dp"
-            android:layout_alignStart="@+id/dateText"
-            android:layout_alignParentTop="true"
-            cardview:layout_constraintEnd_toEndOf="parent"
-            cardview:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tempText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/descriptionText"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/temperature"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            cardview:layout_constraintStart_toStartOf="parent"
-            cardview:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/weatherImage"
+                android:layout_width="110dp"
+                android:layout_height="75dp"
+                app:imageUrl="@{weather.icon}"
+                android:layout_alignStart="@+id/dateText"
+                android:layout_alignParentTop="true"
+                cardview:layout_constraintEnd_toEndOf="parent"
+                cardview:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/descriptionText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/discription"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:textColor="@color/white"
-            cardview:layout_constraintStart_toStartOf="parent"
-            cardview:layout_constraintTop_toBottomOf="@+id/tempText" />
+            <TextView
+                android:id="@+id/tempText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/descriptionText"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@{weather.temp + (char) 0x00B0}"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                cardview:layout_constraintStart_toStartOf="parent"
+                cardview:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/dateText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tempText"
-            android:layout_marginStart="8dp"
-            android:text="@string/date"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textColor="@color/white"
-            cardview:layout_constraintBottom_toBottomOf="parent"
-            cardview:layout_constraintStart_toStartOf="parent"
-            cardview:layout_constraintTop_toBottomOf="@+id/descriptionText" />
+            <TextView
+                android:id="@+id/descriptionText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@{weather.desc}"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:textColor="@color/white"
+                cardview:layout_constraintStart_toStartOf="parent"
+                cardview:layout_constraintTop_toBottomOf="@+id/tempText" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+            <TextView
+                android:id="@+id/dateText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tempText"
+                android:layout_marginStart="8dp"
+                android:text="@{weather.date}"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textColor="@color/white"
+                cardview:layout_constraintBottom_toBottomOf="parent"
+                cardview:layout_constraintStart_toStartOf="parent"
+                cardview:layout_constraintTop_toBottomOf="@+id/descriptionText" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

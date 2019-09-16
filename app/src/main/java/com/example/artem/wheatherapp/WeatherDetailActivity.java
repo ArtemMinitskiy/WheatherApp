@@ -2,47 +2,29 @@ package com.example.artem.wheatherapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
-import com.example.artem.wheatherapp.adapter.WeatherRecyclerAdapter;
-import com.squareup.picasso.Picasso;
+import com.example.artem.wheatherapp.databinding.ActivityWeatherDetailBinding;
+import com.example.artem.wheatherapp.model.WeatherItem;
+
+import java.util.ArrayList;
 
 public class WeatherDetailActivity extends AppCompatActivity {
-    public TextView tempText;
-    public TextView descriptionText;
-    public TextView windText;
-    public TextView cloudsText;
-    public TextView cityText;
-    public ImageView weatherImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_weather_detail);
-
-        tempText = findViewById(R.id.textTemp);
-        descriptionText = findViewById(R.id.textDescription);
-        windText = findViewById(R.id.textWind);
-        cloudsText = findViewById(R.id.textClouds);
-        cityText = findViewById(R.id.textCity);
-        weatherImage = findViewById(R.id.weatherImage);
+        ActivityWeatherDetailBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_weather_detail);
 
         Intent intent = getIntent();
 
-        getSupportActionBar().setTitle(intent.getStringExtra("city"));
+        ArrayList<WeatherItem> listWeathers = intent.getParcelableArrayListExtra("Weather");
+        WeatherItem weatherItem = listWeathers.get(intent.getIntExtra("position", 0));
+        getSupportActionBar().setTitle(listWeathers.get(0).getCity());
 
-        tempText.setText(WeatherRecyclerAdapter.FormatTemp(intent.getStringExtra("temp")));
-        descriptionText.setText(intent.getStringExtra("desc"));
-        windText.setText(intent.getStringExtra("wind"));
-        cloudsText.setText(intent.getStringExtra("clouds"));
-        cityText.setText(intent.getStringExtra("city"));
-        Picasso.get()
-                .load("http://openweathermap.org/img/w/" + intent.getStringExtra("icon") + ".png")
-                .into(weatherImage);
+        binding.setWeather(weatherItem);
+
     }
-
-
 }
